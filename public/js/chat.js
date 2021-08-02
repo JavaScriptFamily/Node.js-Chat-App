@@ -15,6 +15,7 @@ const sidebarTemplate = document.querySelector("#sidebar-template").innerHTML;
 // Options
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true });
 
+// Scroll
 const autoscroll = () => {
   // New message element
   const $newMessage = $messages.lastElementChild;
@@ -38,6 +39,7 @@ const autoscroll = () => {
   }
 };
 
+// Message HTML
 socket.on("message", message => {
   const html = Mustache.render(messageTemplate, {
     username: message.username,
@@ -49,6 +51,7 @@ socket.on("message", message => {
   autoscroll();
 });
 
+// Location HTML
 socket.on("locationMessage", message => {
   console.log(message);
   const html = Mustache.render(locationMessageTemplate, {
@@ -60,6 +63,7 @@ socket.on("locationMessage", message => {
   $messages.insertAdjacentHTML("beforeend", html);
 });
 
+// Sidebar Update
 socket.on("roomData", ({ room, users }) => {
   const html = Mustache.render(sidebarTemplate, {
     room,
@@ -69,6 +73,7 @@ socket.on("roomData", ({ room, users }) => {
   document.querySelector("#sidebar").innerHTML = html;
 });
 
+// Send Message
 $messageForm.addEventListener("submit", e => {
   e.preventDefault();
 
@@ -89,6 +94,7 @@ $messageForm.addEventListener("submit", e => {
   });
 });
 
+// Send Location
 $sendLocationBtn.addEventListener("click", () => {
   if (!navigator.geolocation) {
     return alert("Geolocation is not supported by your browser.");
@@ -113,6 +119,7 @@ $sendLocationBtn.addEventListener("click", () => {
   }
 });
 
+// Join Room
 socket.emit("join", { username, room }, error => {
   if (error) {
     alert(error);
